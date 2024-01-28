@@ -1,4 +1,5 @@
 import mongoose, { Schema} from "mongoose";
+import validator from "validator";
 
 const userSchema = new Schema (
     {
@@ -16,18 +17,37 @@ const userSchema = new Schema (
             unique:true,
             lowercase:true,
             trim:true,
+            validate(value){
+                if(!validator.isEmail(value)){
+                    throw new Error("not valid email")
+                }
+            }
         },
         password:{
             type: String,
             required: true,
+            minlength: 6,
+        },
+        cpassword:{
+            type: String,
+            required: true,
+            minlength: 6,
         },
         role:{
             enum:[admin, organiser, agent, tourist],
-            default: tourist
+            default: tourist,
         },
         deactivateAccount:{
-            default: false
-        }
+            default: false,
+        },
+        tokens: [
+            {
+                toekn: {
+                    type: String,
+                    required: true,
+                }
+            }
+        ]
 
     
     },{timestamps: true})
